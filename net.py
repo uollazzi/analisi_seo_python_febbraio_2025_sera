@@ -99,39 +99,45 @@ r = {
 #           </tr>
 #         </tbody>
 #       </table>
-html = ""
 
-for host in r["scan"].items():
-    # host in quanto ITEM del DICT r["scan"] è SEMPRE una TUPLA di 2 elementi
-    html += f"<h2>HOST: {host[0]}</h2>"
-    html += """
-    <table class="table table-hover">
-        <thead>
-          <th>Port</th>
-          <th>Status</th>
-        </thead>
-        <tbody>
-    """
 
-    tcps = host[1]["tcp"]
+def genera_html_scan(nmap_result):
+    html = ""
 
-    for port in tcps.items():
-        # port in quanto ITEM del DICT tcps è SEMPRE una TUPLA di 2 elementi
-        html += f"""<tr>
-            <td>{port[0]}</td>
-            <td>{port[1]["state"]}</td>
-          </tr>"""
+    for host in nmap_result["scan"].items():
+        # host in quanto ITEM del DICT r["scan"] è SEMPRE una TUPLA di 2 elementi
+        html += f"<h2>HOST: {host[0]}</h2>"
+        html += """
+        <table class="table table-hover">
+            <thead>
+            <th>Port</th>
+            <th>Status</th>
+            </thead>
+            <tbody>
+        """
 
-    html += """
-    </tbody>
-      </table>
-    """
+        tcps = host[1]["tcp"]
 
-template_html = ""
-with open("scan_template.html", "rt", encoding="utf8") as f:
-    template_html = f.read()
+        for port in tcps.items():
+            # port in quanto ITEM del DICT tcps è SEMPRE una TUPLA di 2 elementi
+            html += f"""<tr>
+                <td>{port[0]}</td>
+                <td>{port[1]["state"]}</td>
+            </tr>"""
 
-template_html = template_html.replace("%%SCAN%%", html)
+        html += """
+        </tbody>
+        </table>
+        """
 
-with open("scan.html", "wt", encoding="utf8") as f:
-    f.write(template_html)
+    template_html = ""
+    with open("scan_template.html", "rt", encoding="utf8") as f:
+        template_html = f.read()
+
+    template_html = template_html.replace("%%SCAN%%", html)
+
+    with open("scan.html", "wt", encoding="utf8") as f:
+        f.write(template_html)
+
+
+genera_html_scan(r)
